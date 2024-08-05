@@ -1,0 +1,1 @@
+This repository contains a set of software that I tested with while working on the Boost Spirit X3 library.  It mainly serves as an example for a few lightly-documented language features (e.g. keywords, skippers).  All comments and suggestions are welcome.
