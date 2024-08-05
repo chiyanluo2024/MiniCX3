@@ -1,20 +1,3 @@
-/*=============================================================================
-    Copyright (c) 2001-2014 Joel de Guzman
-
-    Distributed under the Boost Software License, Version 1.0. (See accompanying
-    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-=============================================================================*/
-///////////////////////////////////////////////////////////////////////////////
-//
-//  Now we'll introduce boolean expressions and control structures.
-//  Is it obvious now what we are up to? ;-)
-//
-//  [ JDG April 9, 2007 ]       spirit2
-//  [ JDG February 18, 2011 ]   Pure attributes. No semantic actions.
-//  [ JDG June 6, 2014 ]        Ported from qi calc8 example.
-//
-///////////////////////////////////////////////////////////////////////////////
-
 #include "ast.hpp"
 #include "vm.hpp"
 #include "compiler.hpp"

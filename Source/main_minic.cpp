@@ -1,18 +1,3 @@
-/*=============================================================================
-    Copyright (c) 2001-2011 Joel de Guzman
-
-    Distributed under the Boost Software License, Version 1.0. (See accompanying
-    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-=============================================================================*/
-///////////////////////////////////////////////////////////////////////////////
-//
-//  Not a calculator anymore, right? :-)
-//
-//  [ JDG April 10, 2007 ]      spirit2
-//  [ JDG February 18, 2011 ]   Pure attributes. No semantic actions.
-//
-///////////////////////////////////////////////////////////////////////////////
-
 #include "vm.hpp"
 #include "compiler.hpp"
 #include "function.hpp"
