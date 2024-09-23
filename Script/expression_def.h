@@ -255,23 +255,23 @@ namespace client {
         auto const assignment_def =
             ('$' >> declname)
             >> '='
-            >> expression
-            >> ';'
+            > expression
+            > ';'
             ;
 
         auto const array_assignment_def = 
             ('$' >> declname)
             >> '[' 
-            >> expression
-            >> ']' 
-            >> '='
-            >> expression
-            >> ';'
+            > expression
+            > ']' 
+            > '='
+            > expression
+            > ';'
             ;
 
         auto const if_expression_def =
             lit("if")
-            > '('
+            >> '('
             > expression
             > ','
             > compound_expression
@@ -282,7 +282,7 @@ namespace client {
 
         auto const list_expression_def =
             lit("list")
-            > '('
+            >> '('
             > ('$' > declname)
             > ','
             > expression

@@ -580,6 +580,7 @@ namespace client
 				stack_ptr -= *size_ptr;
 				loopInfo[*pi].range.assign(stack_ptr, stack_ptr + *size_ptr);
 				loopInfo[*pi].iCurr = *size_ptr;
+				loopInfo[*pi].resSize = 0;
 				if (!*size_ptr) {
 					++pi;
 					pc += *pi;

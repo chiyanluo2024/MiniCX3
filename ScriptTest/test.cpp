@@ -257,48 +257,63 @@ TEST_F(ScriptTest, TestOthers) {
 		};
 	std::vector<std::string> in_name({ "spot", "strike" });
 	std::vector<std::vector<double> > in_value({ {50, 96, 101, 106, 150}, {100} });
-	std::vector<double> value;
+	std::vector<double> value, expected0, expected1;
 
-	auto check = [&](int testNo) {
-		EXPECT_EQ(value.size(), in_value[0].size());
+
+	auto check = [&](int testNo, const std::vector<double>& expected) {
+		EXPECT_EQ(value.size(), expected.size());
 		for (size_t i = 0; i < value.size(); ++i) {
-			double expected = callPayoff(in_value[0].size() > 1 ? in_value[0][i] : in_value[0][0], in_value[1].size() > 1 ? in_value[1][i] : in_value[1][0]);
-			EXPECT_NEAR(value[i], expected, eps);
+			EXPECT_NEAR(value[i], expected[i], eps);
 		}
 		};
 
+	expected0 = { 0., 10., 0., 10. };
 	// array assignment, power
 	std::string script0 = "$test = zero(4); $test[1 & 3] = strike ^ 0.5; test";
 	client::ScriptInterface s0(script0, in_name, in_value);
 	value.clear();
 	s0.run(value);
-	auto check0 = [](int testNo, const std::vector<double>& value) {
-		EXPECT_EQ(value.size(), 4);
-		for (size_t i = 0; i < value.size(); ++i) {
-			double expected = (i == 1 || i == 3) ? 10. : 0.;
-			EXPECT_NEAR(value[i], expected, eps);
-		}
-		};
-	check0(0, value);
+	check(0, expected0);
+
+	expected1.resize(in_value[0].size());
+	for (size_t i = 0; i < expected1.size(); ++i) {
+		expected1[i] = callPayoff(in_value[0].size() > 1 ? in_value[0][i] : in_value[0][0], in_value[1].size() > 1 ? in_value[1][i] : in_value[1][0]);
+	}
 
 	// simple assignment
 	std::string script1 = "$payoff = plus(spot - strike); payoff";
 	client::ScriptInterface s1(script1, in_name, in_value);
 	value.clear();
 	s1.run(value);
-	check(1);
+	check(1, expected1);
 
-	// if and while statement
-	std::string script2 = "$payoff = list($i, 0:(#spot-1), if(spot[i] > strike, spot[i]-strike, 0.0)); payoff";
+	// if, list, and compound expressions
+	std::string script2 = "$payoff = list($i, 0:(#spot-1), $x = if(spot[i] > strike, $y = spot[i]-strike; y, $z = 0.0; z); x); payoff";
 	client::ScriptInterface s2(script2, in_name, in_value);
 	value.clear();
 	s2.run(value);
-	check(2);
+	check(2, expected1);
 
 	// array index
-	std::string script3 = "$payoff = zero(#spot); list($i, 0:(#spot-1), $payoff[i] = plus(spot[i] - strike); payoff[i]); payoff";
+	std::string script3 = "$payoff = zero(#spot); $payoff[0:#spot-1] = plus(spot - strike); payoff";
 	client::ScriptInterface s3(script3, in_name, in_value);
 	value.clear();
 	s3.run(value);
-	check(3);
+	check(3, expected1);
+
+	std::vector<double> expected2({ 1., 1., 2., 1., 2., 3., 1., 2., 3., 4., });
+	// non-homogeneous list
+	std::string script4 = "list($i, 1:4, 1:i)";
+	client::ScriptInterface s4(script4, {}, {});
+	value.clear();
+	s4.run(value);
+	check(4, expected2);
+
+	std::vector<double> expected3({ 1., 2., 4., 3., 6., 9., });
+	// nested list
+	std::string script5 = "list($i, 1:3, list($j, 1:i, i*j))";
+	client::ScriptInterface s5(script5, {}, {});
+	value.clear();
+	s5.run(value);
+	check(5, expected3);
 }
