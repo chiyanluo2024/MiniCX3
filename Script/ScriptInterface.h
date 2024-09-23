@@ -7,10 +7,11 @@
 namespace client {
 	class ScriptInterface {
 	public:
-		ScriptInterface();
+		ScriptInterface(unsigned stackSize = 4096);
 		ScriptInterface(const std::string& script,
 			const std::vector<std::string>& name,
-			const std::vector<std::vector<double> >& value);
+			const std::vector<std::vector<double> >& value,
+			unsigned stackSize = 4096);
 		const std::vector<bytecode>& getCode() const { return code; }
 		const std::vector<int>& getIndex() const { return index; }
 		void update(const std::string& name, const std::vector<double>& value);
@@ -26,6 +27,8 @@ namespace client {
 		size_t ninput;
 		std::vector<std::vector<double> > constant;
 		std::vector<loopData> loopInfo;
+		std::vector<double> stack;
+		std::vector<size_t> size;
 		std::vector<std::vector<double> > local;
 	};
 }

@@ -77,8 +77,10 @@ namespace client
     public:
 
         static const double dbl_eps;
-        vmachine(unsigned stackSize = 4096)
-            : stack(stackSize), size(stackSize)
+        vmachine(std::vector<double>& st,
+            std::vector<size_t>& sz,
+            std::vector<std::vector<double>>& lcl)
+            : stack(st), size(sz), local(lcl)
         {
         }
 
@@ -103,9 +105,9 @@ namespace client
 
         void add(const std::vector<double>& v, std::vector<double>::iterator& stack_ptr, std::vector<size_t>::iterator& size_ptr);
 
-        std::vector<double> stack;
-        std::vector<size_t> size;
-        std::vector<std::vector<double>> local;
+        std::vector<double>& stack;
+        std::vector<size_t>& size;
+        std::vector<std::vector<double>>& local;
 
         std::vector<double>::iterator stack_ptr;
         std::vector<size_t>::iterator size_ptr;

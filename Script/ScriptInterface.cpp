@@ -4,11 +4,12 @@
 #include "config.h"
 
 namespace client {
-	ScriptInterface::ScriptInterface() : ninput(0) { }
+	ScriptInterface::ScriptInterface(unsigned stackSize) : ninput(0), stack(stackSize), size(stackSize) { }
 
 	ScriptInterface::ScriptInterface(const std::string& script,
 		const std::vector<std::string>& name,
-		const std::vector<std::vector<double> >& value) : ninput(0)
+		const std::vector<std::vector<double> >& value,
+		unsigned stackSize) : ninput(0), stack(stackSize), size(stackSize)
 	{
 		using client::parser::iterator_type;
 		iterator_type iter = script.begin();
@@ -87,9 +88,8 @@ namespace client {
 
 	void ScriptInterface::run(std::vector<double>& result)
 	{
-		client::vmachine vm;
+		client::vmachine vm(stack, size, local);
 		vm.execute(code, index, variable, constant, loopInfo, ninput);
-		local = vm.get_local();
 		vm.get_stack_top(result);
 	}
 }

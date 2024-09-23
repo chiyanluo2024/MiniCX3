@@ -273,8 +273,8 @@ namespace client {
             lit("if")
             >> '('
             > expression
-            > ','
-            > compound_expression
+            >> ','
+            >> compound_expression
             > ','
             > compound_expression
             > ')'
