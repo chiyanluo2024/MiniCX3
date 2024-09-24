@@ -11,6 +11,8 @@ namespace client {
 		ScriptInterface(const std::string& script,
 			const std::vector<std::string>& name,
 			const std::vector<std::vector<double> >& value,
+			const std::vector<std::string>& array2dname = {},
+			const std::vector<size_t>& array2ddim = {},
 			unsigned stackSize = 4096);
 		const std::vector<bytecode>& getCode() const { return code; }
 		const std::vector<int>& getIndex() const { return index; }
@@ -24,6 +26,7 @@ namespace client {
 		std::vector<bytecode> code;
 		std::vector<int> index;
 		std::map<std::string, size_t> variable;
+		std::map<std::string, size_t> array2d;
 		size_t ninput;
 		std::vector<std::vector<double> > constant;
 		std::vector<loopData> loopInfo;

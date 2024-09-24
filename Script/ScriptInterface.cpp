@@ -9,8 +9,24 @@ namespace client {
 	ScriptInterface::ScriptInterface(const std::string& script,
 		const std::vector<std::string>& name,
 		const std::vector<std::vector<double> >& value,
+		const std::vector<std::string>& array2dname,
+		const std::vector<size_t>& array2ddim,
 		unsigned stackSize) : ninput(0), stack(stackSize), size(stackSize)
 	{
+		std::map<std::string, size_t> array2d;
+		if (array2dname.size() != array2ddim.size()) {
+			throw std::invalid_argument("array2d name and dim array size must be the same");
+		}
+		for (size_t i = 0; i < array2dname.size(); ++i) {
+			std::map<std::string, size_t>::iterator iter = array2d.find(array2dname[i]);
+			if (iter == array2d.end()) {
+				array2d.insert({ array2dname[i], array2ddim[i] });
+			}
+			else {
+				iter->second = array2ddim[i];
+			}
+		}
+
 		using client::parser::iterator_type;
 		iterator_type iter = script.begin();
 		iterator_type end = script.end();
@@ -29,7 +45,7 @@ namespace client {
 				client::compound_expression()
 			];
 
-		code_gen::compiler cmp(code, index, variable, constant, loopInfo, error_handler);				// Our compiler
+		code_gen::compiler cmp(code, index, variable, array2d, constant, loopInfo, error_handler);				// Our compiler
 		if (name.size() != value.size()) {
 			throw std::invalid_argument("name and value array size must be the same");
 		}

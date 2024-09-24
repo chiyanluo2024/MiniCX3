@@ -20,6 +20,7 @@ namespace client {
         struct expression;
         struct array_sequence;
         struct array_index;
+        struct array2d_index;
         struct function_call;
         struct statement;
         struct compound_expression;
@@ -41,6 +42,7 @@ namespace client {
             , x3::forward_ast<unary>
             , x3::forward_ast<array_sequence>
             , x3::forward_ast<array_index>
+            , x3::forward_ast<array2d_index>
             , x3::forward_ast<function_call>
             , x3::forward_ast<expression>
             , x3::forward_ast<compound_expression>
@@ -104,6 +106,13 @@ namespace client {
             expression index;
         };
 
+        struct array2d_index : x3::position_tagged
+        {
+            identifier array_name;
+            expression index1;
+            expression index2;
+        };
+
         struct function_call : x3::position_tagged
         {
             identifier function_name;
@@ -123,10 +132,19 @@ namespace client {
             expression rhs;
         };
 
+        struct array2d_assignment : x3::position_tagged
+        {
+            identifier array_name;
+            expression index1;
+            expression index2;
+            expression rhs;
+        };
+
         struct statement :
             x3::variant<
             assignment
             , array_assignment
+            , array2d_assignment
             , expression
             >
         {

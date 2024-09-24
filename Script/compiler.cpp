@@ -174,12 +174,40 @@ namespace client {
             size_t const* p = find_var(x.array_name.name);
             if (p == 0)
             {
-                error_handler(x.array_name, "Undeclared variable: " + x.array_name.name);
+                error_handler(x.array_name, "Undeclared array: " + x.array_name.name);
                 return false;
             }
             if (!(*this)(x.index))
                 return false;
 
+            code.push_back(op_index);
+            index.push_back(int(*p));
+
+            return true;
+        }
+
+        bool compiler::operator()(ast::array2d_index const& x)
+        {
+            size_t const* p = find_var(x.array_name.name);
+            if (p == 0)
+            {
+                error_handler(x.array_name, "Undeclared array2d: " + x.array_name.name);
+                return false;
+            }
+            std::map<std::string, size_t>::const_iterator i = array2d.find(x.array_name.name);
+            size_t dim = (i != array2d.end()) ? i->second : 0;
+
+            if (!(*this)(x.index1))
+                return false;
+
+            code.push_back(op_push);
+            local.push_back(std::vector<double>(1, double(dim)));
+            code.push_back(op_mul);
+
+            if (!(*this)(x.index2))
+                return false;
+
+            code.push_back(op_add);
             code.push_back(op_index);
             index.push_back(int(*p));
 
@@ -223,12 +251,42 @@ namespace client {
             size_t const* p = find_var(x.array_name.name);
             if (p == 0)
             {
-                error_handler(x.array_name, "Undeclared variable: " + x.array_name.name);
+                error_handler(x.array_name, "Undeclared array: " + x.array_name.name);
                 return false;
             }
             if (!(*this)(x.index))
                 return false;
 
+            code.push_back(op_indexstore);
+            index.push_back(int(*p));
+            return true;
+        }
+
+        bool compiler::operator()(ast::array2d_assignment const& x)
+        {
+            if (!(*this)(x.rhs))
+                return false;
+
+            size_t const* p = find_var(x.array_name.name);
+            if (p == 0)
+            {
+                error_handler(x.array_name, "Undeclared array2d: " + x.array_name.name);
+                return false;
+            }
+            std::map<std::string, size_t>::const_iterator i = array2d.find(x.array_name.name);
+            size_t dim = (i != array2d.end()) ? i->second : 0;
+
+            if (!(*this)(x.index1))
+                return false;
+
+            code.push_back(op_push);
+            local.push_back(std::vector<double>(1, double(dim)));
+            code.push_back(op_mul);
+
+            if (!(*this)(x.index2))
+                return false;
+
+            code.push_back(op_add);
             code.push_back(op_indexstore);
             index.push_back(int(*p));
             return true;

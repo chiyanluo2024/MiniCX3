@@ -24,6 +24,10 @@ BOOST_FUSION_ADAPT_STRUCT(client::ast::array_index,
     array_name, index
 )
 
+BOOST_FUSION_ADAPT_STRUCT(client::ast::array2d_index,
+    array_name, index1, index2
+)
+
 BOOST_FUSION_ADAPT_STRUCT(client::ast::function_call,
     function_name, args
 )
@@ -34,6 +38,10 @@ BOOST_FUSION_ADAPT_STRUCT(client::ast::assignment,
 
 BOOST_FUSION_ADAPT_STRUCT(client::ast::array_assignment,
     array_name, index, rhs
+)
+
+BOOST_FUSION_ADAPT_STRUCT(client::ast::array2d_assignment,
+    array_name, index1, index2, rhs
 )
 
 BOOST_FUSION_ADAPT_STRUCT(client::ast::compound_expression,

@@ -21,10 +21,11 @@ namespace client {
                 error_handler_type;
 
             template <typename ErrorHandler>
-            compiler(std::vector<bytecode>& cd, std::vector<int>& idx, std::map<std::string, size_t>& var, 
+            compiler(std::vector<bytecode>& cd, std::vector<int>& idx, std::map<std::string, size_t>& var,
+                std::map<std::string, size_t>& a2d,
                 std::vector<std::vector<double>>& lcl, std::vector<loopData>& ld,
                 ErrorHandler const& error_handler)
-                : code(cd), index(idx), variables(var), local(lcl), loopInfo(ld),
+                : code(cd), index(idx), variables(var), array2d(a2d), local(lcl), loopInfo(ld),
                 error_handler(
                     [&](x3::position_tagged pos, std::string const& msg)
                     { error_handler(pos, msg); }
@@ -39,10 +40,12 @@ namespace client {
             bool operator()(ast::unary const& x);
             bool operator()(ast::array_sequence const& x);
             bool operator()(ast::array_index const& x);
+            bool operator()(ast::array2d_index const& x);
             bool operator()(ast::function_call const& x);
             bool operator()(ast::expression const& x);
             bool operator()(ast::assignment const& x);
             bool operator()(ast::array_assignment const& x);
+            bool operator()(ast::array2d_assignment const& x);
             bool operator()(ast::statement const& x);
             bool operator()(ast::compound_expression const& x);
             bool operator()(ast::if_expression const& x);
@@ -68,6 +71,7 @@ namespace client {
             std::vector<bytecode>& code;
             std::vector<int>& index;
             std::map<std::string, size_t>& variables;
+            std::map<std::string, size_t>& array2d;
             std::vector<std::vector<double>>& local;
             std::vector<loopData>& loopInfo;
 

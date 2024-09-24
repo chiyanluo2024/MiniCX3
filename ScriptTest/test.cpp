@@ -249,6 +249,24 @@ TEST_F(ScriptTest, TestTernary) {
 	s3.run(value);
 	expected = std::vector<double>({ 2, 100, 2, 0.5, 0.5 });
 	check(3, value, expected);
+	std::string script4 = "$z = x & y; z[0:1,2]";
+	client::ScriptInterface s4(script4, in_name, in_value);
+	s4.run(value);
+	expected = std::vector<double>({ 110, 110 });
+	check(4, value, expected);
+	client::ScriptInterface s4_(script4, in_name, in_value, {"z"}, { 3 });
+	s4_.run(value);
+	expected = std::vector<double>({ 110, 4 });
+	check(4, value, expected);
+	std::string script5 = "$z = x & y; $z[0:1,2] = 0; z";
+	client::ScriptInterface s5(script5, in_name, in_value);
+	s5.run(value);
+	expected = std::vector<double>({ 90, 100, 0, 1, 2, 4 });
+	check(5, value, expected);
+	client::ScriptInterface s5_(script5, in_name, in_value, { "z" }, { 3 });
+	s5_.run(value);
+	expected = std::vector<double>({ 90, 100, 0, 1, 2, 0 });
+	check(5, value, expected);
 }
 
 TEST_F(ScriptTest, TestOthers) {
@@ -257,27 +275,27 @@ TEST_F(ScriptTest, TestOthers) {
 		};
 	std::vector<std::string> in_name({ "spot", "strike" });
 	std::vector<std::vector<double> > in_value({ {50, 96, 101, 106, 150}, {100} });
-	std::vector<double> value, expected0, expected1;
+	std::vector<double> value, expected;
 
 
-	auto check = [&](int testNo, const std::vector<double>& expected) {
+	auto check = [&](int testNo) {
 		EXPECT_EQ(value.size(), expected.size());
 		for (size_t i = 0; i < value.size(); ++i) {
 			EXPECT_NEAR(value[i], expected[i], eps);
 		}
 		};
 
-	expected0 = { 0., 10., 0., 10. };
+	expected = { 0., 10., 0., 10. };
 	// array assignment, power
 	std::string script0 = "$test = zero(4); $test[1 & 3] = strike ^ 0.5; test";
 	client::ScriptInterface s0(script0, in_name, in_value);
 	value.clear();
 	s0.run(value);
-	check(0, expected0);
+	check(0);
 
-	expected1.resize(in_value[0].size());
-	for (size_t i = 0; i < expected1.size(); ++i) {
-		expected1[i] = callPayoff(in_value[0].size() > 1 ? in_value[0][i] : in_value[0][0], in_value[1].size() > 1 ? in_value[1][i] : in_value[1][0]);
+	expected.resize(in_value[0].size());
+	for (size_t i = 0; i < expected.size(); ++i) {
+		expected[i] = callPayoff(in_value[0].size() > 1 ? in_value[0][i] : in_value[0][0], in_value[1].size() > 1 ? in_value[1][i] : in_value[1][0]);
 	}
 
 	// simple assignment
@@ -285,35 +303,43 @@ TEST_F(ScriptTest, TestOthers) {
 	client::ScriptInterface s1(script1, in_name, in_value);
 	value.clear();
 	s1.run(value);
-	check(1, expected1);
+	check(1);
 
 	// if, list, and compound expressions
 	std::string script2 = "$payoff = list($i, 0:(#spot-1), $x = if(spot[i] > strike, $y = spot[i]-strike; y, $z = 0.0; z); x); payoff";
 	client::ScriptInterface s2(script2, in_name, in_value);
 	value.clear();
 	s2.run(value);
-	check(2, expected1);
+	check(2);
 
 	// array index
 	std::string script3 = "$payoff = zero(#spot); $payoff[0:#spot-1] = plus(spot - strike); payoff";
 	client::ScriptInterface s3(script3, in_name, in_value);
 	value.clear();
 	s3.run(value);
-	check(3, expected1);
+	check(3);
 
-	std::vector<double> expected2({ 1., 1., 2., 1., 2., 3., 1., 2., 3., 4., });
+	expected = { 1., 1., 2., 1., 2., 3., 1., 2., 3., 4., };
 	// non-homogeneous list
 	std::string script4 = "list($i, 1:4, 1:i)";
 	client::ScriptInterface s4(script4, {}, {});
 	value.clear();
 	s4.run(value);
-	check(4, expected2);
+	check(4);
 
-	std::vector<double> expected3({ 1., 2., 4., 3., 6., 9., });
+	expected = { 1., 2., 4., 3., 6., 9., };
 	// nested list
 	std::string script5 = "list($i, 1:3, list($j, 1:i, i*j))";
 	client::ScriptInterface s5(script5, {}, {});
 	value.clear();
 	s5.run(value);
-	check(5, expected3);
+	check(5);
+
+	expected = { 0.96, 1.05, 101, 105, 97, 99};
+	// array2D with functions
+	std::string script6 = "min(S[2,0:2]/S[0,0:2]) & max(S[1,0:2]/S[0,0:2]) & S[max(0:2),min(0:2)] & S[(0:2)+3]";
+	client::ScriptInterface s6(script6, { "S" }, { {100, 100, 100, 105, 97, 99, 101, 97, 96} }, { "S" }, { 3 });
+	value.clear();
+	s6.run(value);
+	check(6);
 }

@@ -111,11 +111,13 @@ namespace client {
         struct primary_expr_class;
         struct array_sequence_class;
         struct array_index_class;
+        struct array2d_index_class;
         struct function_call_class;
 
         struct statement_class;
         struct assignment_class;
         struct array_assignment_class;
+        struct array2d_assignment_class;
         struct if_expression_class;
         struct list_expression_class;
 
@@ -133,11 +135,13 @@ namespace client {
         typedef x3::rule<primary_expr_class, ast::operand> primary_expr_type;
         typedef x3::rule<array_sequence_class, ast::array_sequence> array_sequence_type;
         typedef x3::rule<array_index_class, ast::array_index> array_index_type;
+        typedef x3::rule<array2d_index_class, ast::array2d_index> array2d_index_type;
         typedef x3::rule<function_call_class, ast::function_call> function_call_type;
 
         typedef x3::rule<statement_class, ast::statement> statement_type;
         typedef x3::rule<assignment_class, ast::assignment> assignment_type;
         typedef x3::rule<array_assignment_class, ast::array_assignment> array_assignment_type;
+        typedef x3::rule<array2d_assignment_class, ast::array2d_assignment> array2d_assignment_type;
         typedef x3::rule<if_expression_class, ast::if_expression> if_expression_type;
         typedef x3::rule<list_expression_class, ast::list_expression> list_expression_type;
 
@@ -155,12 +159,14 @@ namespace client {
         primary_expr_type const primary_expr = "primary_expr";
         array_sequence_type const array_sequence = "array_sequence";
         array_index_type const array_index = "array_index";
+        array2d_index_type const array2d_index = "array2d_index";
         function_call_type const function_call = "function_call";
 
         compound_expression_type const compound_expression("compound_expression");
         statement_type const statement("statement");
         assignment_type const assignment("assignment");
         array_assignment_type const array_assignment("array_assignment");
+        array2d_assignment_type const array2d_assignment("array2d_assignment");
         if_expression_type const if_expression("if_expression");
         list_expression_type const list_expression("list_expression");
 
@@ -222,6 +228,7 @@ namespace client {
             bool_
             | double_
             | function_call
+            | array2d_index
             | array_index
             | declname
             | '(' > expression > ')'
@@ -235,6 +242,14 @@ namespace client {
             > ']'
             ;
 
+        auto const array2d_index_def =
+            (declname >> '[')
+            >> expression
+            >> ',' 
+            >> expression
+            >> ']'
+            ;
+
         auto const function_call_def =
             (declname >> '(')
             > -(expression % ',')
@@ -242,7 +257,8 @@ namespace client {
             ;
 
         auto const statement_def =
-            array_assignment
+            array2d_assignment
+            | array_assignment
             | assignment
             | (expression >> ';')
             ;
@@ -253,17 +269,29 @@ namespace client {
             ;
 
         auto const assignment_def =
-            ('$' >> declname)
-            >> '='
+            ('$' > declname)
+            > '='
             > expression
             > ';'
             ;
 
         auto const array_assignment_def = 
-            ('$' >> declname)
+            ('$' > declname)
             >> '[' 
-            > expression
+            >> expression
             > ']' 
+            > '='
+            > expression
+            > ';'
+            ;
+
+        auto const array2d_assignment_def =
+            ('$' > declname)
+            >> '['
+            >> expression
+            >> ','
+            >> expression
+            >> ']'
             > '='
             > expression
             > ';'
@@ -271,10 +299,10 @@ namespace client {
 
         auto const if_expression_def =
             lit("if")
-            >> '('
+            > '('
             > expression
-            >> ','
-            >> compound_expression
+            > ','
+            > compound_expression
             > ','
             > compound_expression
             > ')'
@@ -282,7 +310,7 @@ namespace client {
 
         auto const list_expression_def =
             lit("list")
-            >> '('
+            > '('
             > ('$' > declname)
             > ','
             > expression
@@ -306,11 +334,13 @@ namespace client {
             , primary_expr
             , array_sequence
             , array_index
+            , array2d_index
             , function_call
             , statement
             , compound_expression
             , assignment
             , array_assignment
+            , array2d_assignment
             , if_expression
             , list_expression
         );
