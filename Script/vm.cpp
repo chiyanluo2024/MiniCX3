@@ -180,10 +180,10 @@ namespace client
 	}
 
     void vmachine::execute(
-        std::vector<bytecode> const& code,
-        std::vector<int>& index,
-		std::map<std::string, size_t>& variable,
-		std::vector<std::vector<double>>& data,
+        const std::vector<bytecode>& code,
+        const std::vector<int>& index,
+		const std::map<std::string, size_t>& variable,
+		const std::vector<std::vector<double>>& data,
 		std::vector<loopData>& loopInfo,
         size_t ninput
     )

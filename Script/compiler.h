@@ -22,7 +22,7 @@ namespace client {
 
             template <typename ErrorHandler>
             compiler(std::vector<bytecode>& cd, std::vector<int>& idx, std::map<std::string, size_t>& var,
-                std::map<std::string, size_t>& a2d,
+                const std::map<std::string, size_t>& a2d,
                 std::vector<std::vector<double>>& lcl, std::vector<loopData>& ld,
                 ErrorHandler const& error_handler)
                 : code(cd), index(idx), variables(var), array2d(a2d), local(lcl), loopInfo(ld),
@@ -71,7 +71,7 @@ namespace client {
             std::vector<bytecode>& code;
             std::vector<int>& index;
             std::map<std::string, size_t>& variables;
-            std::map<std::string, size_t>& array2d;
+            const std::map<std::string, size_t>& array2d;
             std::vector<std::vector<double>>& local;
             std::vector<loopData>& loopInfo;
 
