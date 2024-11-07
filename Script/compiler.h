@@ -63,7 +63,8 @@ namespace client {
             std::vector<std::vector<double> > const& get_local() const { return local; }
 
             typedef std::pair<bytecode, size_t> funcsig;
-            typedef std::map<std::string, funcsig> funcmap;
+            typedef std::pair<std::string, size_t> funcnamearg;
+            typedef std::map<funcnamearg, funcsig> funcmap;
             static const funcmap functions;
 
         private:

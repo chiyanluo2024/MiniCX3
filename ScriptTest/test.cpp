@@ -194,7 +194,7 @@ TEST_F(ScriptTest, TestBinary) {
 	std::vector<std::string> in_name({ "x", "y" });
 	std::vector<std::vector<double> > in_value({ {5, 0.5, 3.}, {1, 2, 4} });
 	std::vector<double> value;
-	std::string script = "emax(x, y) & emin(x, y)";
+	std::string script = "max(x, y) & min(x, y)";
 	client::ScriptInterface s(script, in_name, in_value);
 	s.run(value);
 	std::vector<double> expected({ 5, 2, 4, 1, 0.5, 3. });

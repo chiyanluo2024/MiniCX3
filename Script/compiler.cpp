@@ -15,21 +15,21 @@ namespace client {
     namespace code_gen
     {
         /*static*/ const compiler::funcmap compiler::functions = {
-        { "plus", funcsig(op_floor, 1)},
-        { "minus", funcsig(op_cap, 1)},
-        { "zero", funcsig(op_zero, 1)},
-        { "abs", funcsig(op_abs, 1)},
-        { "sqr", funcsig(op_sqr, 1)},
-        { "sqrt", funcsig(op_sqrt, 1)},
-        { "exp", funcsig(op_exp, 1)},
-        { "log", funcsig(op_log, 1)},
-        { "sum", funcsig(op_sum, 1)},
-        { "prod", funcsig(op_prod, 1)},
-        { "min", funcsig(op_min, 1)},
-        { "max", funcsig(op_max, 1)},
-        { "emax", funcsig(op_emax, 2)},
-        { "emin", funcsig(op_emin, 2)},
-        { "interp", funcsig(op_interp, 3)},
+        { {"plus",1}, funcsig(op_floor, 1)},
+        { {"minus",1}, funcsig(op_cap, 1)},
+        { {"zero",1}, funcsig(op_zero, 1)},
+        { {"abs",1}, funcsig(op_abs, 1)},
+        { {"sqr",1}, funcsig(op_sqr, 1)},
+        { {"sqrt",1}, funcsig(op_sqrt, 1)},
+        { {"exp",1}, funcsig(op_exp, 1)},
+        { {"log",1}, funcsig(op_log, 1)},
+        { {"sum",1}, funcsig(op_sum, 1)},
+        { {"prod",1}, funcsig(op_prod, 1)},
+        { {"min",1}, funcsig(op_min, 1)},
+        { {"max",1}, funcsig(op_max, 1)},
+        { {"max",2}, funcsig(op_emax, 2)},
+        { {"min",2}, funcsig(op_emin, 2)},
+        { {"interp",3}, funcsig(op_interp, 3)},
         };
 
         size_t const* compiler::find_var(std::string const& name) const
@@ -119,18 +119,10 @@ namespace client {
 
         bool compiler::operator()(ast::function_call const& x)
         {
-            auto psig = functions.find(x.function_name.name);
+            auto psig = functions.find({ x.function_name.name, x.args.size() });
             if (psig == functions.end())
             {
-                error_handler(x.function_name, "Function not found: " + x.function_name.name);
-                return false;
-            }
-
-            auto p = psig->second;
-
-            if (p.second != x.args.size())
-            {
-                error_handler(x.function_name, "Wrong number of arguments: " + x.function_name.name);
+                error_handler(x.function_name, "Function not found: " + x.function_name.name + " with " + std::to_string(x.args.size()) + " args");
                 return false;
             }
 
@@ -140,6 +132,7 @@ namespace client {
                     return false;
             }
 
+            auto p = psig->second;
             code.push_back(p.first);
             index.push_back(int(p.second));
 
