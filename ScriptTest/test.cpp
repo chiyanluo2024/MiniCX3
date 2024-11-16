@@ -1,6 +1,7 @@
 #include "pch.h"
 #include <numeric>
 #include "ScriptInterface.h"
+#include "Normal.h"
 
 class ScriptTest : public testing::Test {
 public:
@@ -164,10 +165,20 @@ TEST_F(ScriptTest, TestUnary) {
 			EXPECT_NEAR(res[ind], val, eps);
 			++ind;
 		}
+		for (size_t i = 0; i < x.size(); ++i) {
+			val = CML::NormalDistribution::CDF_Cephes(x[i], 0);
+			EXPECT_NEAR(res[ind], val, eps);
+			++ind;
+		}
+		for (size_t i = 0; i < x.size(); ++i) {
+			val = CML::NormalDistribution::InverseCDF_Cephes(fabs(x[i]));
+			EXPECT_NEAR(res[ind], val, eps);
+			++ind;
+		}
 		};
 	std::vector<std::string> in_name({ "x" });
 	std::vector<std::vector<double> > in_value({ {-0.2, 0.4} });
-	std::string script = "$ax = abs(x); sum(x) & prod(x) & min(x) & max(x) & plus(x) & minus(x) & sqr(x) & sqrt(ax) & exp(x) & log(ax)";
+	std::string script = "$ax = abs(x); sum(x) & prod(x) & min(x) & max(x) & plus(x) & minus(x) & sqr(x) & sqrt(ax) & exp(x) & log(ax) & norm(x) & norminv(ax)";
 	std::vector<double> value;
 	client::ScriptInterface s(script, in_name, in_value);
 	s.run(value);

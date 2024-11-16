@@ -27,12 +27,14 @@
     <ClInclude Include="..\..\Script\error_handler.h" />
     <ClInclude Include="..\..\Script\expression.h" />
     <ClInclude Include="..\..\Script\expression_def.h" />
+    <ClInclude Include="..\..\Script\Normal.h" />
     <ClInclude Include="..\..\Script\ScriptInterface.h" />
     <ClInclude Include="..\..\Script\vm.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Script\compiler.cpp" />
     <ClCompile Include="..\..\Script\expression.cpp" />
+    <ClCompile Include="..\..\Script\Normal.cpp" />
     <ClCompile Include="..\..\Script\ScriptInterface.cpp" />
     <ClCompile Include="..\..\Script\vm.cpp" />
   </ItemGroup>

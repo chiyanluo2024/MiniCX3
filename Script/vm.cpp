@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <numeric>
 #include <cmath>
+#include "Normal.h"
 
 namespace client
 {
@@ -55,6 +56,12 @@ namespace client
 				throw std::runtime_error("cannot calculate log of a negative number or zero");
 			}
 			*iter = log(*iter);
+			break;
+		case op_norm:
+			*iter = CML::NormalDistribution::CDF_Cephes(*iter, 0);
+			break;
+		case op_norminv:
+			*iter = CML::NormalDistribution::InverseCDF_Cephes(*iter);
 			break;
 		default:
 			throw std::runtime_error("unsupported op code " + std::to_string(int(c)) + " input for proc_op1");
@@ -222,6 +229,8 @@ namespace client
             case op_sqrt:
             case op_exp:
             case op_log:
+			case op_norm:
+			case op_norminv:
                 if (*pc == op_zero && *(size_ptr - 1) == 1) {
                     size_t n = std::max(1, static_cast<int>(*(stack_ptr - 1) + 0.5));
                     size_t ii = stack_ptr - stack.begin();

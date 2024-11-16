@@ -23,6 +23,8 @@ namespace client {
         { {"sqrt",1}, funcsig(op_sqrt, 1)},
         { {"exp",1}, funcsig(op_exp, 1)},
         { {"log",1}, funcsig(op_log, 1)},
+        { {"norm",1}, funcsig(op_norm, 1)},
+        { {"norminv",1}, funcsig(op_norminv, 1)},
         { {"sum",1}, funcsig(op_sum, 1)},
         { {"prod",1}, funcsig(op_prod, 1)},
         { {"min",1}, funcsig(op_min, 1)},
@@ -577,6 +579,14 @@ namespace client {
 
                 case op_log:
                     line += "      op_log";
+                    break;
+
+                case op_norm:
+                    line += "      op_norm";
+                    break;
+
+                case op_norminv:
+                    line += "      op_norminv";
                     break;
 
                 case op_interp:

@@ -20,6 +20,8 @@ namespace client
         op_sqrt,		//	returns the square root of the top stack entry
         op_exp,			//	returns the exponential of the top stack entry
         op_log,			//	returns the natural logarithm of the top stack entry
+        op_norm,	    //	returns the cumulative normal distribution of the top stack entry
+        op_norminv,		//	returns the inverse cumulative normal distribution the top stack entry
 
         // unary (scalar)
         op_len,			//  array length of the top stack entry
