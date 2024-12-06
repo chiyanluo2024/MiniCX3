@@ -26,7 +26,6 @@ namespace client {
 		std::vector<bytecode> code;
 		std::vector<int> index;
 		std::map<std::string, size_t> variable;
-		std::map<std::string, size_t> array2d;
 		size_t ninput;
 		std::vector<std::vector<double> > constant;
 		std::vector<loopData> loopInfo;
