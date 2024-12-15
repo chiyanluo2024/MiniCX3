@@ -192,7 +192,8 @@ namespace client
 		const std::map<std::string, size_t>& variable,
 		const std::vector<std::vector<double>>& data,
 		std::vector<loopData>& loopInfo,
-        size_t ninput
+        size_t ninput,
+		std::vector<double>& stepCopy
     )
     {
 		static const std::vector<double> vtrue(1, 1.0);
@@ -213,7 +214,6 @@ namespace client
         size_t sizetmp;
         std::vector<double>::iterator iter1, iter2;
         std::vector<double>::const_iterator itertmp;
-        static std::vector<double> stepCopy;
 
         while (pc != code.end())
         {

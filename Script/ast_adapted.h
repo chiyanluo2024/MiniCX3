@@ -56,4 +56,8 @@ BOOST_FUSION_ADAPT_STRUCT(client::ast::list_expression,
     var, range, body
 )
 
+BOOST_FUSION_ADAPT_STRUCT(client::ast::expression_block,
+    name, group, var, body
+)
+
 #endif

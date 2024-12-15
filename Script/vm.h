@@ -91,7 +91,8 @@ namespace client
             const std::map<std::string, size_t>& variable,
             const std::vector<std::vector<double>>& data,
             std::vector<loopData>& loopInfo,
-            size_t ninput);
+            size_t ninput,
+            std::vector<double>& workspace);
 
         std::vector<double> const& get_stack() const { return stack; }
         std::vector<double>& get_stack() { return stack; }

@@ -4,7 +4,7 @@
 #include <boost/spirit/home/x3/support/ast/variant.hpp>
 #include <boost/spirit/home/x3/support/ast/position_tagged.hpp>
 #include <boost/fusion/include/io.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 #include <list>
 
 namespace client {
@@ -26,6 +26,7 @@ namespace client {
         struct compound_expression;
         struct if_expression;
         struct list_expression;
+        struct expression_block;
 
         struct identifier : x3::position_tagged
         {
@@ -169,6 +170,14 @@ namespace client {
         {
             identifier var;
             expression range;
+            compound_expression body;
+        };
+
+        struct expression_block
+        {
+            identifier name;
+            identifier group;
+            std::optional<identifier> var;
             compound_expression body;
         };
 

@@ -169,6 +169,7 @@ namespace client {
         array2d_assignment_type const array2d_assignment("array2d_assignment");
         if_expression_type const if_expression("if_expression");
         list_expression_type const list_expression("list_expression");
+        expression_block_type const expression_block("expression_block");
 
         auto const declname_def = identifier;
 
@@ -319,6 +320,14 @@ namespace client {
             > ')'
             ;
 
+        auto const expression_block_def =
+            lit("@") 
+            > declname
+            > '[' > declname > ']'
+            > -('<' > declname > '>')
+            > '{' > compound_expression > '}'
+            ;
+
         BOOST_SPIRIT_DEFINE(
             expression
             , declname
@@ -343,6 +352,7 @@ namespace client {
             , array2d_assignment
             , if_expression
             , list_expression
+            , expression_block
         );
 
         struct expression_class : error_handler_base {};
@@ -360,6 +370,12 @@ namespace client
     {
         parser::add_keywords();
         return parser::compound_expression;
+    }
+
+    parser::expression_block_type const& expression_block()
+    {
+        parser::add_keywords();
+        return parser::expression_block;
     }
 }
 

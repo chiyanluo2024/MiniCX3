@@ -354,3 +354,26 @@ TEST_F(ScriptTest, TestOthers) {
 	s6.run(value);
 	check(6);
 }
+
+TEST(BlockScriptTest, TestBasics) {
+	static const double eps = 1.0e-14;
+	std::string script = "@PDate [Path] { min(S, Path) } @Maturity [ CashFlow ] < payment > { plus(Path - strike) }";
+	std::vector<std::string> name({ "PDate", "Maturity" });
+	std::vector<std::string> group({ "Path", "CashFlow" });
+	std::vector<std::string> var({ "", "payment" });
+	std::vector<std::vector<double>> expectedRes({ {95, 87}, {5} });
+	client::BlockScriptInterface bs(script, { "S", "Path", "strike" }, { {100, 87}, {95}, {90} });
+	std::vector<double> res;
+	auto sb = bs.getScriptBlock();
+	EXPECT_EQ(sb.size(), 2);
+	for (size_t i = 0; i < sb.size(); ++i) {
+		EXPECT_EQ(std::get<0>(sb[i]), name[i]);
+		EXPECT_EQ(std::get<1>(sb[i]), group[i]);
+		EXPECT_EQ(std::get<2>(sb[i]), var[i]);
+		std::get<3>(sb[i]).run(res);
+		EXPECT_EQ(res.size(), expectedRes[i].size());
+		for (size_t j = 0; j < res.size(); ++j) {
+			EXPECT_NEAR(res[j], expectedRes[i][j], eps);
+		}
+	}
+}
