@@ -206,9 +206,11 @@ namespace client
             throw std::runtime_error("Number of inputs is larger than the actual data");
         }
         std::vector<std::vector<double> >::const_iterator pv = data.begin();
-        local.resize(variable.size());
-        std::copy(pv, pv + ninput, local.begin());
-        pv += ninput;
+		if (ninput > variable.size()) {
+			throw std::runtime_error("Number of inputs is larger than the actual variable");
+		}
+        local.resize(variable.size() - ninput);
+		pv += ninput;
         bool cond;
         double tmp;
         size_t sizetmp;
@@ -488,7 +490,8 @@ namespace client
 			case op_index:
 			{
 				iter1 = stack_ptr - *(size_ptr - 1);
-				const std::vector<double>& arr = local[*pi++];
+				const std::vector<double>& arr = *pi >= ninput ? local[*pi - ninput] : data[*pi];
+				++pi;
 				while (iter1 != stack_ptr) {
 					size_t ns = static_cast<size_t>(*iter1 + 0.5);
 					if (ns >= arr.size()) {
@@ -500,16 +503,20 @@ namespace client
 			break;
 
 			case op_load:
-				if (pi == index.end() || *pi == local.size()) {
+				if (pi == index.end() || *pi == local.size() + ninput) {
 					throw std::runtime_error("variable loading out of bounds");
 				}
-				add(local[*pi++], stack_ptr, size_ptr);
+				add(*pi >= ninput ? local[*pi - ninput] : data[*pi], stack_ptr, size_ptr);
+				++pi;
 				break;
 
 			case op_store:
 				--size_ptr;
-				local[*pi].resize(*size_ptr);
-				iter1 = local[*pi].begin();
+				if (*pi < ninput) {
+					throw std::runtime_error("Attempt to modify an input constant with index " + std::to_string(*pi));
+				}
+				local[*pi - ninput].resize(*size_ptr);
+				iter1 = local[*pi - ninput].begin();
 				iter2 = stack_ptr - *size_ptr;
 				while (iter2 != stack_ptr) {
 					*iter1++ = *iter2++;
@@ -524,7 +531,11 @@ namespace client
 				iter1 = stack_ptr - *size_ptr;
 				--size_ptr;
 				iter2 = iter1 - *size_ptr;
-				std::vector<double>& arr = local[*pi++];
+				if (*pi < ninput) {
+					throw std::runtime_error("attempt to modify an input constant with index " + std::to_string(*pi));
+				}
+				std::vector<double>& arr = local[*pi - ninput];
+				++pi;
 				if (*(size_ptr + 1) != *size_ptr && *size_ptr != 1) {
 					throw std::runtime_error("assignment of arrays of different sizes");
 				}
@@ -597,8 +608,11 @@ namespace client
 					pi += *(pi + 2);
 				}
 				else {
-					local[loopInfo[*pi].iVar].resize(1);
-					local[loopInfo[*pi].iVar][0] = *stack_ptr;
+					if (loopInfo[*pi].iVar < ninput) {
+						throw std::runtime_error("attempt to modify an input constant with index " + std::to_string(loopInfo[*pi].iVar));
+					}
+					local[loopInfo[*pi].iVar - ninput].resize(1);
+					local[loopInfo[*pi].iVar - ninput][0] = *stack_ptr;
 					pi += 4;
 				}
 				break;
@@ -607,7 +621,10 @@ namespace client
 				loopInfo[*pi].resSize += *(size_ptr - 1);
 				--loopInfo[*pi].iCurr;
 				if (loopInfo[*pi].iCurr) {
-					local[loopInfo[*pi].iVar][0] = loopInfo[*pi].range[loopInfo[*pi].range.size() - loopInfo[*pi].iCurr];
+					if (loopInfo[*pi].iVar < ninput) {
+						throw std::runtime_error("attempt to modify an input constant with index " + std::to_string(loopInfo[*pi].iVar));
+					}
+					local[loopInfo[*pi].iVar - ninput][0] = loopInfo[*pi].range[loopInfo[*pi].range.size() - loopInfo[*pi].iCurr];
 					++pi;
 					pc += *pi;
 					pv += *(pi + 1);

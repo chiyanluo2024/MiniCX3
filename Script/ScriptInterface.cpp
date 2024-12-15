@@ -71,10 +71,23 @@ namespace client {
 		}
 	}
 
+	void ScriptInterface::update(const std::string& name, const double* value) {
+		auto item = variable.find(name);
+		if (item != variable.end()) {
+			std::vector<double>& v = constant[item->second];
+			std::copy(value, value + v.size(), v.begin());
+		}
+	}
+
 	void ScriptInterface::retrieve(const std::string& name, std::vector<double>& value) const {
 		auto item = variable.find(name);
 		if (item != variable.end()) {
-			value = local[item->second];
+			if (item->second >= ninput) {
+				value = local[item->second - ninput];
+			}
+			else {
+				value = constant[item->second];
+			}
 		}
 		else {
 			throw std::runtime_error("variable " + name + " not found in script data");
@@ -97,7 +110,12 @@ namespace client {
 		size_t i = 0;
 		for (auto item = variable.begin(); item != variable.end(); ++item) {
 			name[i] = item->first;
-			value[i] = local[item->second];
+			if (item->second >= ninput) {
+				value[i] = local[item->second - ninput];
+			}
+			else {
+				value[i] = constant[item->second];
+			}
 			++i;
 		}
 	}

@@ -224,6 +224,13 @@ TEST_F(ScriptTest, TestBinary) {
 	s.run(value);
 	expected = std::vector<double>({ 0.5, -0.5 });
 	check(3, value, expected);
+	double x = 1.5;
+	double y = -1.5;
+	s.update("x", &x);
+	s.update("y", &y);
+	s.run(value);
+	expected = std::vector<double>({ 1.5, -1.5 });
+	check(4, value, expected);
 }
 
 TEST_F(ScriptTest, TestTernary) {
@@ -255,7 +262,7 @@ TEST_F(ScriptTest, TestTernary) {
 	s2.run(value);
 	expected = std::vector<double>({ 90, 100, 110, 1, 4 });
 	check(2, value, expected);
-	std::string script3 = "$x[0:2:2] = 2; $y[0:2] = 0.5; x & y[0:2:2]";
+	std::string script3 = "$xx = x; $yy = y; $xx[0:2:2] = 2; $yy[0:2] = 0.5; xx & yy[0:2:2]";
 	client::ScriptInterface s3(script3, in_name, in_value);
 	s3.run(value);
 	expected = std::vector<double>({ 2, 100, 2, 0.5, 0.5 });

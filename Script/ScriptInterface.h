@@ -17,6 +17,7 @@ namespace client {
 		const std::vector<bytecode>& getCode() const { return code; }
 		const std::vector<int>& getIndex() const { return index; }
 		void update(const std::string& name, const std::vector<double>& value);
+		void update(const std::string& name, const double* value);
 		std::vector<std::string> getDataName() const;
 		void retrieve(const std::string& name, std::vector<double>& value) const;
 		void retrieve(std::vector<std::string>& name, std::vector<std::vector<double> >& value) const;
