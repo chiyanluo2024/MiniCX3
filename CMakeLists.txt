@@ -3,9 +3,15 @@ cmake_policy(SET CMP0167 OLD)
 
 project(MiniCX3 VERSION 1.0)
 
-if (MSVC)
-  add_compile_options(/std:c++17)
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  set(gtest_disable_pthreads ON)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -v -fcolor-diagnostics -target x86_64-pc-windows-msvc -I/home/chiyan/winsdk/crt/include/ -I/home/chiyan/winsdk/sdk/include/cppwinrt/ -I/home/chiyan/winsdk/sdk/include/shared/ -I/home/chiyan/winsdk/sdk/include/ucrt/ -I/home/chiyan/winsdk/sdk/include/um/ -I/home/chiyan/winsdk/sdk/include/winrt/ -I/home/chiyan/projects/boost_1_86_0/ -flto -march=native -fuse-ld=lld -std=c++17 -Xlinker /force -L/home/chiyan/winsdk/crt/lib/x64/ -L/home/chiyan/winsdk/sdk/lib/ucrt/x64/ -L/home/chiyan/winsdk/sdk/lib/um/x64/")
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  # using GCC
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  # using Visual Studio C++
 endif()
+
 add_library(compiler_flags INTERFACE)
 
 target_compile_features(compiler_flags INTERFACE cxx_std_17)

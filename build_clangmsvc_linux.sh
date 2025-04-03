@@ -1,0 +1,2 @@
+#!/bin/bash
+cmake -U CMAKE_THREAD_PREFER_PTHREAD -U THREADS_PREFER_PTHREAD_FLAG -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -S . -B clangmsvc_build && cmake --build clangmsvc_build --config Release && mv clangmsvc_build/Source/Calc9X3 clangmsvc_build/Source/Calc9X3.exe && mv clangmsvc_build/Source/MinicX3 clangmsvc_build/Source/MinicX3.exe && mv clangmsvc_build/ScriptTest/ScriptTest clangmsvc_build/ScriptTest/ScriptTest.exe && clangmsvc_build/ScriptTest/ScriptTest.exe
